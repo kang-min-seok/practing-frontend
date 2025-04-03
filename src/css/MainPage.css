@@ -1,0 +1,116 @@
+/* 메인 컨테이너 */
+.mainpage-container {
+    background: #f0f2f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  /* 타이틀 */
+  .mainpage-title {
+    font-size: 1.8rem;
+    color: #222;
+    margin-bottom: 40px;
+    font-weight: bold;
+  }
+  
+  /* input & 첫 번째 버튼 그룹 */
+  .input-group {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .input-group input {
+    width: 280px;
+    height: 40px;
+    font-size: 1rem;
+    padding: 5px 10px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+  }
+  
+  /* 첫 번째 버튼 */
+  .input-group button {
+    height: 50px;
+    width: 120px;
+    background-color: #003366;
+    color: #fff;
+    border: none;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.15);
+  }
+  
+  .input-group button:hover {
+    background-color: #0055aa;
+  }
+  
+  /* 두 번째 버튼: 넓이 100% */
+  .fullwidth-button {
+    width: 420px;
+    max-width: 90vw; /* 혹은 다른 기준으로 */
+    height: 44px;
+    background-color: #008080;
+    color: #fff;
+    border: none;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px; /* 아래 컴포넌트와 여백 */
+    box-shadow: 0 2px 3px rgba(0,0,0,0.15);
+  }
+  
+  .fullwidth-button:hover {
+    background-color: #00a0a0;
+  }
+  
+  /* 시계 텍스트 */
+  .clock-text {
+    font-size: 3rem;
+    color: #003366;
+    margin: 20px 0 5px;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+  
+  /* 공통 텍스트 */
+  .info-text {
+    font-size: 1.1rem;
+    color: #444;
+    margin: 8px 0;
+  }
+  
+  .info-text--highlight {
+    color: #d9534f; /* 에러나 강조 표시 */
+  }
+  
+  /* 요청 시간 리스트 */
+  .request-list {
+    width: 420px;
+    max-width: 90vw;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px 20px;
+    margin-top: 20px;
+  }
+  
+  .request-list h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .request-list p {
+    margin: 4px 0;
+    color: #333;
+  }
+  
