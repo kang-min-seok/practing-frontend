@@ -1,93 +1,104 @@
 import React, { useState, useEffect } from 'react';
 import { fetchDateHeader } from '../api/ticketApi';
-import '../css/MainPage.css';  // CSS 파일 import
+import GLOBAL from '../GlobalVariable';
+import '../css/MainPage.css';
+
+// 컴포넌트
+import NavBar from '../components/NavBar.jsx';
+import SearchBar from '../components/SearchBar.jsx';
+import TimeBar from '../components/TimeBar.jsx';
+import TicketBox from '../components/TicketBox.jsx';
 
 const MainPage = () => {
-  const [targetUrl, setTargetUrl] = useState('');
+  const [inputUrl, setInputUrl] = useState('');
+  const [targetUrl, setTargetUrl] = useState(`${GLOBAL.DOMAIN}`);
   const [serverTime, setServerTime] = useState('');
   const [clockTime, setClockTime] = useState('');
-
-  // "내가 요청을 보낸 시점"을 저장할 배열
   const [requestTimes, setRequestTimes] = useState([]);
 
-  // 1) 서버 시간을 가져와 시계를 업데이트하는 버튼
-  const handleGetDate = async () => {
-    const result = await fetchDateHeader(targetUrl);
-
-    if (result.startsWith('Error:')) {
-      setServerTime('오류 발생');
-    } else {
-      setServerTime(result);
+  const parseUrl = (url) => {
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+    } catch (error) {
+      setClockTime('URL parse error');
+      return '잘못된 URL';
     }
+    return `${parsedUrl.protocol}//${parsedUrl.host}`;
+  }
+
+  const getDate = async (url) => {
+    const parsedUrl = parseUrl(url);
+    const result = await fetchDateHeader(parsedUrl);
+    setServerTime(result.startsWith('Error:') ? '' : result);
+    setTargetUrl(parsedUrl);
+    setRequestTimes([]);
+  }
+
+  // 서버 시간을 가져와 시계를 업데이트하는 버튼
+  const handleGetDate = () => {
+    getDate(inputUrl);
   };
 
-  // 2) "내 요청이 서버에 어느 시점에 들어갔는지" 확인하는 버튼
+  // 내 요청이 서버에 어느 시점에 들어갔는지 확인하는 버튼
   const handleCheckRequestTime = async () => {
-    const result = await fetchDateHeader(targetUrl);
+    const parsedUrl = parseUrl(targetUrl);
+    const result = await fetchDateHeader(parsedUrl);
 
     if (!result.startsWith('Error:')) {
-        setRequestTimes((prev) => [...prev, result]);
+      setRequestTimes((prev) => [...prev, result]);
     }
   };
+
+
+  useEffect(() => {
+    getDate(targetUrl);
+  }, []);
 
   useEffect(() => {
     let timerId;
-
-    if (serverTime && !serverTime.startsWith('Error:')) {
-      let date = new Date(serverTime);
-
-      if (isNaN(date.getTime())) {
-        console.warn('서버가 ISO 형식이 아니어서 Date 변환 실패. 수동 파싱 필요');
-      }
-
-      // 시계를 매초 업데이트
+    if (serverTime) {
+      let dateObj = new Date(serverTime);
       timerId = setInterval(() => {
-        date = new Date(date.getTime() + 1000);
-        const formattedTime = date.toLocaleTimeString();
-        setClockTime(formattedTime);
+        dateObj = new Date(dateObj.getTime() + 1000);
+        const formatted = dateObj.toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        });
+        setClockTime(formatted);
       }, 1000);
-
-      // 초깃값도 즉시 표시
-      setClockTime(date.toLocaleTimeString());
+    } else {
+      setClockTime('');
     }
 
     return () => clearInterval(timerId);
   }, [serverTime]);
 
   return (
-    <div className="mainpage-container">
-      <h1 className="mainpage-title">네이비즘 스타일 티켓팅 연습</h1>
-
-      <div className="input-group">
-        <input
-          type="text"
-          placeholder="서버 시간을 가져올 URL을 입력해주세요."
-          value={targetUrl}
-          onChange={(e) => setTargetUrl(e.target.value)}
+    <div className="root-container">
+      <NavBar />
+      {/* 메인 컨텐츠 */}
+      <div className="content-wrap">
+        <SearchBar 
+          inputUrl={inputUrl}
+          setInputUrl={setInputUrl}
+          handleGetDate={handleGetDate}
         />
-        <button onClick={handleGetDate}>Get Time!</button>
+        <TimeBar 
+          targetUrl={targetUrl}
+          clockTime={clockTime}
+        />
+        {/* 티켓팅 연습 박스 */}
+        <TicketBox 
+          handleCheckRequestTime={handleCheckRequestTime}
+          requestTimes={requestTimes}
+          setRequestTimes={setRequestTimes}
+        />
+       
       </div>
-
-      {/* 두 번째 버튼: 내 요청이 서버에 들어간 시점 체크 */}
-      <button className="fullwidth-button" onClick={handleCheckRequestTime}>
-        티켓팅하기
-      </button>
-
-      {/* 실시간 시계 표시 */}
-      {clockTime ? 
-      <div className="clock-text">{clockTime}</div> : 
-      <div className="clock-text">URL을 입력해주세요.</div>
-      }
-
-      {/* 요청 시점을 쭉 나열: 가장 최근 요청부터 or 오래된 것부터 */}
-      {requestTimes.length > 0 && (
-        <div className="request-list">
-          {requestTimes.map((time, idx) => (
-            <p key={idx}>{new Date(time).toLocaleString()}</p>
-          ))}
-        </div>
-      )}
     </div>
+
   );
 };
 
