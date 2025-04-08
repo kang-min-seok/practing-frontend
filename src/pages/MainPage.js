@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchDateHeader } from '../api/ticketApi';
-import GLOBAL from '../GlobalVariable';
+import GLOBAL from '../global/GlobalVariable.js';
 import '../css/MainPage.css';
 
 // 컴포넌트
@@ -28,6 +28,7 @@ const MainPage = () => {
   }
 
   const getDate = async (url) => {
+    setClockTime("");
     const parsedUrl = parseUrl(url);
     const result = await fetchDateHeader(parsedUrl);
     setServerTime(result.startsWith('Error:') ? '' : result);

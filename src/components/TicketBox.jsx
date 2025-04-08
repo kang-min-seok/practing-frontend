@@ -1,6 +1,7 @@
 import React from 'react';
 
 import TicketItem from './TicketItem';
+import { BsDatabaseFillSlash } from "react-icons/bs";
 
 const TicketBox = ({
   handleCheckRequestTime,
@@ -40,17 +41,26 @@ const TicketBox = ({
 
       {/* 요청 기록 표시 */}
       <div className="ticket-list">
-        {
-        requestTimes.slice().reverse().map((time, idx) => {
-          const formatted = formatKR(time);
-          const splitted = formatted.split(' '); // [ "2025-04-15", "오후", "4시", "12분", "05초" ]
-          return (
-            <TicketItem 
+        {requestTimes.length === 0 ? (
+          // 배열이 비었을 때 표시할 기본 시각 요소
+          <div className="default-time">
+            <BsDatabaseFillSlash size={80} />
+            <p>요청 기록이 없습니다.</p>
+          </div>
+        ) : (
+          // 배열에 기록이 있으면 기존 로직대로
+          requestTimes.slice().reverse().map((time, idx) => {
+            const formatted = formatKR(time);
+            const splitted = formatted.split(' ');
+            return (
+              <TicketItem
                 splitted={splitted}
                 idx={idx}
-            />
-          );
-        })}
+                key={idx}
+              />
+            );
+          })
+        )}
       </div>
     </div>
   );

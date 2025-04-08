@@ -1,4 +1,4 @@
-import GLOBAL from '../GlobalVariable';
+import GLOBAL from '../global/GlobalVariable';
 
 export const fetchDateHeader = async (targetUrl) => {
     try {
